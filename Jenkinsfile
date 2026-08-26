@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     stages {
+
         stage('Build') {
-            stage('Build') {
             steps {
                 bat 'docker run --rm node:18-alpine node --version'
             }
@@ -13,15 +13,16 @@ pipeline {
             steps {
                 bat 'docker run --rm node:18-alpine npm --version'
             }
+        }
+
+        stage('Application Build') {
             steps {
-                sh '''
-                   ls -al
-                   node --version
-                   npm --version
-                   npm ci
-                   npm run build
-                   '''
+                bat '''
+                    docker run --rm node:18-alpine node --version
+                    docker run --rm node:18-alpine npm --version
+                '''
             }
         }
+
     }
 }

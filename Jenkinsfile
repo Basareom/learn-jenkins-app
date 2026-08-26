@@ -18,8 +18,11 @@ pipeline {
         stage('Application Build') {
             steps {
                 bat '''
-                    docker run --rm node:18-alpine node --version
-                    docker run --rm node:18-alpine npm --version
+                    docker run --rm ^
+                    -v "%CD%:/app" ^
+                    -w /app ^
+                    node:18-alpine ^
+                    sh -c "npm ci && npm run build"
                 '''
             }
         }
@@ -27,14 +30,17 @@ pipeline {
         stage('Test') {
             steps {
                 bat '''
-                    docker run --rm node:18-alpine node --version
-                    docker run --rm node:18-alpine npm --version
-                    npm test
+                    docker run --rm ^
+                    -v "%CD%:/app" ^
+                    -w /app ^
+                    node:18-alpine ^
+                    sh -c "test -f build/index.html && npm test"
                 '''
             }
         }
 
     }
+
     post {
         always {
             junit 'test-results/junit.xml'

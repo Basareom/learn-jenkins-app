@@ -24,5 +24,14 @@ pipeline {
             }
         }
 
+        stage('Test') {
+            steps {
+                bat '''
+                    docker run --rm node:18-alpine node --version
+                    docker run --rm node:18-alpine npm --version
+                '''
+            }
+        }
+
     }
 }

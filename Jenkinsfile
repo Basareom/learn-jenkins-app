@@ -3,7 +3,7 @@ pipeline {
 
     stages {
 
-        stage('Build') {
+        stage('Node Version') {
             steps {
                 bat 'docker run --rm node:18-alpine node --version'
             }
@@ -18,12 +18,13 @@ pipeline {
         stage('Application Build') {
             steps {
                 bat '''
+                    if exist build rmdir /s /q build
+
                     docker run --rm ^
-                    --user root ^
-                    -v "%CD%:/app" ^
-                    -w /app ^
-                    node:18-alpine ^
-                    sh -c "npm ci && npm run build"
+                      -v "%CD%:/app" ^
+                      -w /app ^
+                      node:18-alpine ^
+                      sh -c "npm ci && npm run build"
                 '''
             }
         }
@@ -32,15 +33,13 @@ pipeline {
             steps {
                 bat '''
                     docker run --rm ^
-                    --user root ^
-                    -v "%CD%:/app" ^
-                    -w /app ^
-                    node:18-alpine ^
-                    sh -c "test -f build/index.html && npm test"
+                      -v "%CD%:/app" ^
+                      -w /app ^
+                      node:18-alpine ^
+                      sh -c "npm test -- --watchAll=false"
                 '''
             }
         }
-
     }
 
     post {

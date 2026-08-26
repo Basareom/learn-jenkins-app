@@ -19,6 +19,7 @@ pipeline {
             steps {
                 bat '''
                     docker run --rm ^
+                    --user root ^
                     -v "%CD%:/app" ^
                     -w /app ^
                     node:18-alpine ^
@@ -31,6 +32,7 @@ pipeline {
             steps {
                 bat '''
                     docker run --rm ^
+                    --user root ^
                     -v "%CD%:/app" ^
                     -w /app ^
                     node:18-alpine ^
@@ -43,7 +45,7 @@ pipeline {
 
     post {
         always {
-            junit 'test-results/junit.xml'
+            junit allowEmptyResults: true, testResults: 'test-results/junit.xml'
         }
     }
 }
